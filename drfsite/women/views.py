@@ -20,6 +20,22 @@ class WomenAPIView(APIView):
 
         return Response({'post': serializer.data})
 
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', None)
+        if not pk:
+            return Response({'error': 'method PUT not allowed'})
+
+        try:
+            instance = Women.objects.get(pk=pk)
+        except:
+            return Response({'error': 'Objects does not exist'})
+
+        serializer = WomenSerializer(data=request.data, instance=instance)
+        serializer.is_valid(raise_exception=True)
+        serializer.save() #in save() the update() method will be activated in the Serializer
+        return Response({'post': serializer.data})
+
+
 # class WomenAPIView(generics.ListAPIView):
 #     queryset = Women.objects.all()
 #     serializer_class = WomenSerializer
